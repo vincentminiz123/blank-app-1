@@ -2,7 +2,7 @@ import streamlit as st
 import openai
 
 # 设置API密钥
-openai.api_key = 'sk-ab8lTXmVOuGeGiid01E43e8bB0Ac45D68641A381387d64C9'
+openai.api_key = 
 
 # 页面标题
 st.title("个性化数学学习材料生成器")
