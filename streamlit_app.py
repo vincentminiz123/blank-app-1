@@ -1,58 +1,32 @@
+# app.py
+
 import streamlit as st
 import openai
 
-# 设置API密钥
-openai.api_key = 
+# 设置OpenAI API密钥
+openai.api_key = "your_openai_api_key"
 
-# 页面标题
-st.title("个性化数学学习材料生成器")
-
-# 输入主题
-topic = st.text_input("输入你感兴趣的数学主题：", "代数")
-
-# 选择难度
-difficulty = st.selectbox("选择难度等级：", ("初级", "中级", "高级"))
-
-# 选择个性化偏好
-focus = st.radio("你更关注以下哪方面？", ("概念解释", "例题演练"))
-
-# 生成按钮
-if st.button("生成学习材料"):
-    # 根据用户输入生成学习材料
-    prompt = f"为主题'{topic}'生成{difficulty}难度的数学学习材料，侧重于{focus}。"
+# 定义函数以生成个性化学习材料
+def generate_learning_material(student_info, topic):
     response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
+        engine="text-davinci-003",
+        prompt=f"为{student_info}的学生生成关于{topic}的数学学习材料，包含练习题和详细解答。",
         max_tokens=500
     )
-    
-    content = response.choices[0].text.strip()
-    st.write("### 生成的学习材料：")
-    st.write(content)
-    
-    # 生成互动问题
-    st.write("### 试试回答以下问题：")
-    questions = [
-        {
-            "question": f"关于{topic}，以下哪个陈述是正确的？",
-            "answers": [
-                {"answer": "选项A", "correct": False},
-                {"answer": "选项B", "correct": True},
-                {"answer": "选项C", "correct": False},
-                {"answer": "选项D", "correct": False}
-            ]
-        }
-    ]
-    
-    for q in questions:
-        st.write(q["question"])
-        for ans in q["answers"]:
-            if st.button(ans["answer"]):
-                if ans["correct"]:
-                    st.success("正确!")
-                else:
-                    st.error("错误，再试试。")
+    return response.choices[0].text.strip()
 
-# 跟踪学习进度
-st.write("### 学习进度")
-progress = st.progress(0)
+# 使用Streamlit创建用户界面
+st.title("个性化数学学习材料生成器")
+
+# 用户输入部分
+student_info = st.text_input("请输入学生信息（例如年级、学习水平等）")
+topic = st.text_input("请输入学习主题（例如代数、几何等）")
+
+# 当用户点击按钮时，生成学习材料
+if st.button("生成学习材料"):
+    if student_info and topic:
+        material = generate_learning_material(student_info, topic)
+        st.write("生成的学习材料：")
+        st.write(material)
+    else:
+        st.write("请提供学生信息和学习主题。")
